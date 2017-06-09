@@ -12,13 +12,22 @@ use Dhii\Modular\ModuleInterface;
 abstract class AbstractModuleIterator
 {
     /**
-     * The modules to be iterated, mapped by their IDs.
+     * The modules to be iterated.
      *
      * @since [*next-version*]
      *
      * @var ModuleInterface[]
      */
     protected $modules;
+
+    /**
+     * A map of the module instances using the module IDs as keys.
+     *
+     * @since [*next-version*]
+     *
+     * @var ModuleInterface[]
+     */
+    protected $moduleMap;
 
     /**
      * The numeric index of the current module being served.
@@ -43,7 +52,7 @@ abstract class AbstractModuleIterator
      *
      * @since [*next-version*]
      *
-     * @return ModuleInterface[] An array of modules, mapped by their IDs.
+     * @return ModuleInterface[] An array of modules.
      */
     protected function _getModules()
     {
@@ -55,15 +64,36 @@ abstract class AbstractModuleIterator
      *
      * @since [*next-version*]
      *
-     * @param ModuleInterface[] $modules The module instances, mapped by their IDs.
+     * @param ModuleInterface[] $modules The module instances
      *
      * @return $this
      */
     protected function _setModules(array $modules)
     {
-        $this->modules = $modules;
+        $this->modules   = $modules;
+        $this->moduleMap = $this->_createModuleMap($modules);
 
         return $this;
+    }
+
+    /**
+     * Creates a map of modules, mapped by their ID, from a given module list.
+     *
+     * @since [*next-version*]
+     *
+     * @param array $modules The list of modules.
+     *
+     * @return array The modules, mapped by their IDs.
+     */
+    protected function _createModuleMap(array $modules)
+    {
+        $map = array();
+
+        foreach ($modules as $_module) {
+            $map[$_module->getId()] = $_module;
+        }
+
+        return $map;
     }
 
     /**
@@ -77,10 +107,8 @@ abstract class AbstractModuleIterator
      */
     protected function _getModuleById($moduleId)
     {
-        $modules = $this->_getModules();
-
-        return isset($modules[$moduleId])
-            ? $modules[$moduleId]
+        return isset($this->moduleMap[$moduleId])
+            ? $this->moduleMap[$moduleId]
             : null;
     }
 
@@ -123,10 +151,10 @@ abstract class AbstractModuleIterator
      */
     protected function _getModuleAtIndex($index)
     {
-        $indexed = array_values($this->_getModules());
+        $modules = $this->_getModules();
 
-        return isset($indexed[$index])
-            ? $indexed[$index]
+        return isset($modules[$index])
+            ? $modules[$index]
             : null;
     }
 
