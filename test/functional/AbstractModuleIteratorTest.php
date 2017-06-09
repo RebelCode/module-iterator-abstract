@@ -83,7 +83,7 @@ class AbstractModuleIteratorTest extends TestCase
 
         $subject->this()->_setModules($modules);
 
-        $this->assertEquals($modules, $subject->this()->_getModules());
+        $this->assertEquals(array_values($modules), $subject->this()->_getModules());
     }
 
     /**

@@ -70,8 +70,8 @@ abstract class AbstractModuleIterator
      */
     protected function _setModules(array $modules)
     {
-        $this->modules   = $modules;
-        $this->moduleMap = $this->_createModuleMap($modules);
+        $this->modules   = array_values($modules);
+        $this->moduleMap = $this->_createModuleMap($this->modules);
 
         return $this;
     }
