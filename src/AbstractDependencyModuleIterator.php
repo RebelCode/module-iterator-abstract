@@ -3,7 +3,7 @@
 namespace RebelCode\Modular\Iterator;
 
 use ArrayAccess;
-use Dhii\Modular\ModuleInterface;
+use Dhii\Modular\Module\ModuleInterface;
 
 /**
  * Description of AbstractDependencyModuleIterator.

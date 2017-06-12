@@ -2,7 +2,7 @@
 
 namespace RebelCode\Modular\Iterator;
 
-use Dhii\Modular\ModuleInterface;
+use Dhii\Modular\Module\ModuleInterface;
 
 /**
  * Basic functionality for a module iterator.

@@ -45,7 +45,7 @@ class AbstractModuleIteratorTest extends TestCase
      */
     public function createModule($id)
     {
-        $mock = $this->mock('Dhii\\Modular\\ModuleInterface')
+        $mock = $this->mock('Dhii\\Modular\\Module\\ModuleInterface')
             ->getId($id)
             ->load();
 
