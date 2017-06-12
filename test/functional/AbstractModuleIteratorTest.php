@@ -39,14 +39,14 @@ class AbstractModuleIteratorTest extends TestCase
      *
      * @since [*next-version*]
      *
-     * @param string $id
+     * @param string $key
      *
      * @return ModuleInterface
      */
-    public function createModule($id)
+    public function createModule($key)
     {
         $mock = $this->mock('Dhii\\Modular\\Module\\ModuleInterface')
-            ->getId($id)
+            ->getKey($key)
             ->load();
 
         return $mock->new();
@@ -116,11 +116,11 @@ class AbstractModuleIteratorTest extends TestCase
     }
 
     /**
-     * Tests the method that retrieve a module by ID.
+     * Tests the method that retrieve a module by key.
      *
      * @since [*next-version*]
      */
-    public function testGetModuleById()
+    public function testGetModuleByKey()
     {
         $subject = $this->createInstance();
 
@@ -134,15 +134,15 @@ class AbstractModuleIteratorTest extends TestCase
             'third' => $module3
         ));
 
-        $this->assertSame($module2, $subject->this()->_getModuleById('mod2'));
+        $this->assertSame($module2, $subject->this()->_getModuleByKey('mod2'));
     }
 
     /**
-     * Tests the method that retrieves a module by ID with a non existing ID.
+     * Tests the method that retrieves a module by key with a non existing key.
      *
      * @since [*next-version*]
      */
-    public function testGetModuleByIdFail()
+    public function testGetModuleByKeyFail()
     {
         $subject = $this->createInstance();
 
@@ -156,7 +156,7 @@ class AbstractModuleIteratorTest extends TestCase
             'third' => $module3
         ));
 
-        $this->assertNull($subject->this()->_getModuleById('foobar'));
+        $this->assertNull($subject->this()->_getModuleByKey('foobar'));
     }
 
     /**
@@ -335,13 +335,13 @@ class AbstractModuleIteratorTest extends TestCase
         ));
 
         $_subject->_rewind();
-        $this->assertEquals($module1->getId(), $_subject->_key());
+        $this->assertEquals($module1->getKey(), $_subject->_key());
 
         $_subject->_next();
-        $this->assertEquals($module2->getId(), $_subject->_key());
+        $this->assertEquals($module2->getKey(), $_subject->_key());
 
         $_subject->_next();
-        $this->assertEquals($module3->getId(), $_subject->_key());
+        $this->assertEquals($module3->getKey(), $_subject->_key());
 
         $_subject->_next();
         $this->assertNull($_subject->_key());

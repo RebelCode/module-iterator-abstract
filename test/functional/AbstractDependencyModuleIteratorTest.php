@@ -37,10 +37,10 @@ class AbstractDependencyModuleIteratorTest extends TestCase
         return $mock;
     }
 
-    public function createModule($id, $deps = array())
+    public function createModule($key, $deps = array())
     {
         $mock = $this->mock('Dhii\\Modular\\Module\\ModuleInterface')
-            ->getId($id)
+            ->getKey($key)
             ->getDependencies($deps)
             ->load();
 

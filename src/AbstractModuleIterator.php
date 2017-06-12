@@ -21,7 +21,7 @@ abstract class AbstractModuleIterator
     protected $modules;
 
     /**
-     * A map of the module instances using the module IDs as keys.
+     * A map of the module instances mapped using the module keys.
      *
      * @since [*next-version*]
      *
@@ -77,38 +77,38 @@ abstract class AbstractModuleIterator
     }
 
     /**
-     * Creates a map of modules, mapped by their ID, from a given module list.
+     * Creates a map of modules, mapped by their keys, from a given module list.
      *
      * @since [*next-version*]
      *
      * @param array $modules The list of modules.
      *
-     * @return array The modules, mapped by their IDs.
+     * @return array The modules, mapped by their keys.
      */
     protected function _createModuleMap(array $modules)
     {
         $map = array();
 
         foreach ($modules as $_module) {
-            $map[$_module->getId()] = $_module;
+            $map[$_module->getKey()] = $_module;
         }
 
         return $map;
     }
 
     /**
-     * Retrieves the module with a specific ID.
+     * Retrieves the module with a specific key.
      *
      * @since [*next-version*]
      *
-     * @param string $moduleId The module ID.
+     * @param string $key The module key.
      *
-     * @return ModuleInterface|null The module with the given ID or null if the module ID was not found.
+     * @return ModuleInterface|null The module with the given key or null if the module key was not found.
      */
-    protected function _getModuleById($moduleId)
+    protected function _getModuleByKey($key)
     {
-        return isset($this->moduleMap[$moduleId])
-            ? $this->moduleMap[$moduleId]
+        return isset($this->moduleMap[$key])
+            ? $this->moduleMap[$key]
             : null;
     }
 
@@ -251,7 +251,7 @@ abstract class AbstractModuleIterator
 
         return is_null($current)
             ? null
-            : $current->getId();
+            : $current->getKey();
     }
 
     /**

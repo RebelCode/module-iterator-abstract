@@ -13,7 +13,7 @@ use Dhii\Modular\Module\ModuleInterface;
 abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
 {
     /**
-     * The modules that have already been served, mapped by their IDs.
+     * The modules that have already been served, mapped by their keys.
      *
      * @since [*next-version*]
      *
@@ -26,7 +26,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      *
      * @since [*next-version*]
      *
-     * @return ModuleInterface[] An array of module instances mapped by their IDs.
+     * @return ModuleInterface[] An array of module instances mapped by their keys.
      */
     protected function _getServedModules()
     {
@@ -38,7 +38,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      *
      * @since [*next-version*]
      *
-     * @param ModuleInterface[] $served An array of module instances mapped by their IDs.
+     * @param ModuleInterface[] $served An array of module instances mapped by their keys.
      *
      * @return $this
      */
@@ -58,7 +58,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      */
     protected function _addServedModule(ModuleInterface $module)
     {
-        $this->servedModules[$module->getId()] = $module;
+        $this->servedModules[$module->getKey()] = $module;
 
         return $this;
     }
@@ -68,13 +68,13 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      *
      * @since [*next-version*]
      *
-     * @param string $moduleId The module ID.
+     * @param string $key The module key.
      *
      * @return $this
      */
-    protected function _removeServedModule($moduleId)
+    protected function _removeServedModule($key)
     {
-        unset($this->servedModules[$moduleId]);
+        unset($this->servedModules[$key]);
 
         return $this;
     }
@@ -84,13 +84,13 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      *
      * @since [*next-version*]
      *
-     * @param string $moduleId The module ID.
+     * @param string $key The module key.
      *
      * @return bool True if the module has already been served, false if not.
      */
-    protected function _isModuleServed($moduleId)
+    protected function _isModuleServed($key)
     {
-        return isset($this->servedModules[$moduleId]);
+        return isset($this->servedModules[$key]);
     }
 
     /**
@@ -111,7 +111,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      *
      * @param ModuleInterface $module The module instance.
      *
-     * @return ModuleInterface[] A list of module instances mapped by their IDs.
+     * @return ModuleInterface[] A list of module instances mapped by their keys.
      */
     protected function _getUnservedModuleDependencies(ModuleInterface $module)
     {
@@ -119,7 +119,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
         $dependencies = $this->_getModuleDependencies($module);
 
         return array_filter($dependencies, function ($dep) use ($_this) {
-            return $dep instanceof ModuleInterface && !$_this->_isModuleServed($dep->getId());
+            return $dep instanceof ModuleInterface && !$_this->_isModuleServed($dep->getKey());
         });
     }
 
@@ -144,10 +144,10 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      */
     protected function _getDeepMostUnservedModuleDependency(ModuleInterface $module, $ignore = array())
     {
-        $moduleId          = $module->getId();
-        $ignore[$moduleId] = $module;
-        $dependencies      = $this->_getUnservedModuleDependencies($module);
-        $diffDependencies  = array_diff_key($dependencies, $ignore);
+        $moduleKey          = $module->getKey();
+        $ignore[$moduleKey] = $module;
+        $dependencies       = $this->_getUnservedModuleDependencies($module);
+        $diffDependencies   = array_diff_key($dependencies, $ignore);
 
         // If there are no dependencies, return the given module
         if (empty($diffDependencies)) {
@@ -202,7 +202,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
         }
 
         // Keep advancing until an unserved module is found or until end of module list
-        while ($this->_valid() && $this->_isModuleServed(parent::_determineCurrentModule()->getId())) {
+        while ($this->_valid() && $this->_isModuleServed(parent::_determineCurrentModule()->getKey())) {
             parent::_next();
         }
     }
