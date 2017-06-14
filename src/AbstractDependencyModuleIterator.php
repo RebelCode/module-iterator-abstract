@@ -22,6 +22,15 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
     protected $servedModules;
 
     /**
+     * A cache for the module that is currently being served.
+     *
+     * @since [*next-version*]
+     *
+     * @var ModuleInterface
+     */
+    protected $current;
+
+    /**
      * Retrieves the list of modules that have already been served.
      *
      * @since [*next-version*]
@@ -91,6 +100,37 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
     protected function _isModuleServed($key)
     {
         return isset($this->servedModules[$key]);
+    }
+
+    /**
+     * Gets the current module being served.
+     *
+     * This method should be an inexpensive call to a cached result.
+     *
+     * @see AbstractModuleIterator::_determineCurrentModule()
+     * @since [*next-version*]
+     *
+     * @return ModuleInterface|null The module instance or null if no module is being served.
+     */
+    protected function _getCurrent()
+    {
+        return $this->current;
+    }
+
+    /**
+     * Sets the current module to serve.
+     *
+     * @since [*next-version*]
+     *
+     * @param ModuleInterface|null $current The module instance to serve. Default: null
+     *
+     * @return $this
+     */
+    protected function _setCurrent(ModuleInterface $current = null)
+    {
+        $this->current = $current;
+
+        return $this;
     }
 
     /**
@@ -185,6 +225,17 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
         parent::_rewind();
 
         $this->_setServedModules(array());
+        $this->_next();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _current()
+    {
+        return $this->_getCurrent();
     }
 
     /**
@@ -194,16 +245,17 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      */
     protected function _next()
     {
-        $current = $this->_getCurrent();
-
-        // Mark the current module as served
-        if (!is_null($current)) {
-            $this->_addServedModule($current);
+        // Mark the previous module as served
+        if (!is_null($previous = $this->_getCurrent())) {
+            $this->_addServedModule($previous);
         }
 
         // Keep advancing until an unserved module is found or until end of module list
         while ($this->_valid() && $this->_isModuleServed(parent::_determineCurrentModule()->getKey())) {
             parent::_next();
         }
+
+        // Determine _actual_ current module, which may be a depedency of the found unserved module
+        $this->_setCurrent($this->_determineCurrentModule());
     }
 }

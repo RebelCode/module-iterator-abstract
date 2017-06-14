@@ -72,6 +72,21 @@ class AbstractDependencyModuleIteratorTest extends TestCase
     }
 
     /**
+     * Tests the current module getter and setter methods.
+     *
+     * @since [*next-version*]
+     */
+    public function testGetSetCurrent()
+    {
+        $subject = $this->createInstance();
+
+        $module = $this->createModule('foo-bar');
+        $subject->this()->_setCurrent($module);
+
+        $this->assertEquals($module, $subject->this()->_getCurrent());
+    }
+
+    /**
      * Tests the served modules list getter and setter methods.
      *
      * @since [*next-version*]
@@ -390,7 +405,6 @@ class AbstractDependencyModuleIteratorTest extends TestCase
         ));
 
         $_subject->_rewind();
-        $_subject->_current();
 
         $this->assertSame($modOne, $_subject->_current());
 
@@ -425,7 +439,6 @@ class AbstractDependencyModuleIteratorTest extends TestCase
         ));
 
         $_subject->_rewind();
-        $_subject->_current();
 
         $this->assertSame($modOne, $_subject->_current());
 
@@ -465,7 +478,6 @@ class AbstractDependencyModuleIteratorTest extends TestCase
         ));
 
         $_subject->_rewind();
-        $_subject->_current();
 
         $this->assertSame($modOne, $_subject->_current());
 
