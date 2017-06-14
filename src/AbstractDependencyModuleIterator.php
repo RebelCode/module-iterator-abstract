@@ -229,7 +229,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @since [*next-version*]
      */
