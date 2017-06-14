@@ -39,15 +39,6 @@ abstract class AbstractModuleIterator
     protected $index;
 
     /**
-     * A cache for the module that is currently being served.
-     *
-     * @since [*next-version*]
-     *
-     * @var ModuleInterface
-     */
-    protected $current;
-
-    /**
      * Retrieves the modules to be iterated.
      *
      * @since [*next-version*]
@@ -171,37 +162,6 @@ abstract class AbstractModuleIterator
     }
 
     /**
-     * Gets the current module being served.
-     *
-     * This method should be an inexpensive call to a cached result.
-     *
-     * @see AbstractModuleIterator::_determineCurrentModule()
-     * @since [*next-version*]
-     *
-     * @return ModuleInterface|null The module instance or null if no module is being served.
-     */
-    protected function _getCurrent()
-    {
-        return $this->current;
-    }
-
-    /**
-     * Sets the current module to serve.
-     *
-     * @since [*next-version*]
-     *
-     * @param ModuleInterface|null $current The module instance to serve. Default: null
-     *
-     * @return $this
-     */
-    protected function _setCurrent(ModuleInterface $current = null)
-    {
-        $this->current = $current;
-
-        return $this;
-    }
-
-    /**
      * Determines which module should currently be served.
      *
      * @since [*next-version*]
@@ -220,8 +180,7 @@ abstract class AbstractModuleIterator
      */
     protected function _rewind()
     {
-        $this->_setIndex(0)
-            ->_setCurrent(null);
+        $this->_setIndex(0);
     }
 
     /**
@@ -233,9 +192,7 @@ abstract class AbstractModuleIterator
      */
     protected function _current()
     {
-        $this->_setCurrent($this->_determineCurrentModule());
-
-        return $this->_getCurrent();
+        return $this->_determineCurrentModule();
     }
 
     /**

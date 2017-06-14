@@ -101,21 +101,6 @@ class AbstractModuleIteratorTest extends TestCase
     }
 
     /**
-     * Tests the current module getter and setter methods.
-     *
-     * @since [*next-version*]
-     */
-    public function testGetSetCurrent()
-    {
-        $subject = $this->createInstance();
-
-        $module = $this->createModule('foo-bar');
-        $subject->this()->_setCurrent($module);
-
-        $this->assertEquals($module, $subject->this()->_getCurrent());
-    }
-
-    /**
      * Tests the method that retrieve a module by key.
      *
      * @since [*next-version*]
