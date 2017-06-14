@@ -37,6 +37,16 @@ class AbstractDependencyModuleIteratorTest extends TestCase
         return $mock;
     }
 
+    /**
+     * Creates a module instance for testing.
+     *
+     * @since [*next-version*]
+     *
+     * @param string $key  The module key.
+     * @param array  $deps An array of module keys.
+     *
+     * @return ModuleInterface
+     */
     public function createModule($key, $deps = array())
     {
         $mock = $this->mock('Dhii\\Modular\\Module\\ModuleInterface')
