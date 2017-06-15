@@ -32,6 +32,95 @@ abstract class AbstractDependencyModuleIterator extends AbstractTraversableColle
     protected $current;
 
     /**
+     * A map of the module instances mapped using the module keys.
+     *
+     * @since [*next-version*]
+     *
+     * @var ModuleInterface[]
+     */
+    protected $moduleMap;
+
+    /**
+     * Internal parameterless constructor.
+     *
+     * @since [*next-version*]
+     */
+    protected function _construct()
+    {
+        parent::_construct();
+    }
+
+    /**
+     * Retrieves the map of modules, mapped by their keys.
+     *
+     * @since [*next-version*]
+     *
+     * @return array
+     */
+    protected function _getModuleMap()
+    {
+        $items = $this->_getCachedItems();
+
+        if (is_null($this->moduleMap)) {
+            $this->moduleMap = $this->_createModuleMap($items);
+        }
+
+        return $this->moduleMap;
+    }
+
+    /**
+     * Creates a map of modules, mapped by their keys, from a given module list.
+     *
+     * @since [*next-version*]
+     *
+     * @param array $modules The list of modules.
+     *
+     * @return array The modules, mapped by their keys.
+     */
+    protected function _createModuleMap(array $modules)
+    {
+        $map = array();
+
+        foreach ($modules as $_module) {
+            $map[$_module->getKey()] = $_module;
+        }
+
+        return $map;
+    }
+
+    /**
+     * Clears the map of modules.
+     *
+     * @since [*next-version*]
+     *
+     * @return $this
+     */
+    protected function _clearModuleMap()
+    {
+        $this->moduleMap = null;
+
+        return $this;
+    }
+
+    /**
+     * Retrieves the module with a specific key.
+     *
+     * @since [*next-version*]
+     *
+     * @param string $key The module key.
+     *
+     * @return ModuleInterface|null The module with the given key or null if the module key was not found.
+     */
+    protected function _getModuleByKey($key)
+    {
+        $moduleMap = $this->_getModuleMap();
+
+        return isset($moduleMap[$key])
+            ? $moduleMap[$key]
+            : null;
+    }
+
+    /**
      * Retrieves the list of modules that have already been served.
      *
      * @since [*next-version*]

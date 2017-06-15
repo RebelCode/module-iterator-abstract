@@ -596,4 +596,48 @@ class AbstractDependencyModuleIteratorTest extends TestCase
         $_subject->_next();
         $this->assertNull($_subject->_current());
     }
+
+    /**
+     * Tests the method that retrieve a module by key.
+     *
+     * @since [*next-version*]
+     */
+    public function testGetModuleByKey()
+    {
+        $subject = $this->createInstance();
+
+        $module1 = $this->createModule('one');
+        $module2 = $this->createModule('mod2');
+        $module3 = $this->createModule('third');
+
+        $subject->this()->items = array(
+            'one'   => $module1,
+            'mod2'  => $module2,
+            'third' => $module3
+        );
+
+        $this->assertSame($module2, $subject->this()->_getModuleByKey('mod2'));
+    }
+
+    /**
+     * Tests the method that retrieves a module by key with a non existing key.
+     *
+     * @since [*next-version*]
+     */
+    public function testGetModuleByKeyFail()
+    {
+        $subject = $this->createInstance();
+
+        $module1 = $this->createModule('one');
+        $module2 = $this->createModule('mod2');
+        $module3 = $this->createModule('third');
+
+        $subject->this()->items = array(
+            'one'   => $module1,
+            'mod2'  => $module2,
+            'third' => $module3
+        );
+
+        $this->assertNull($subject->this()->_getModuleByKey('foobar'));
+    }
 }
