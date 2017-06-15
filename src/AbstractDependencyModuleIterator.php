@@ -3,14 +3,15 @@
 namespace RebelCode\Modular\Iterator;
 
 use ArrayAccess;
+use Dhii\Collection\AbstractTraversableCollection;
 use Dhii\Modular\Module\ModuleInterface;
 
 /**
- * Description of AbstractDependencyModuleIterator.
+ * Basic functionality for a module iterator that handles dependencies.
  *
  * @since [*next-version*]
  */
-abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
+abstract class AbstractDependencyModuleIterator extends AbstractTraversableCollection
 {
     /**
      * The modules that have already been served, mapped by their keys.
@@ -208,11 +209,11 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      */
     protected function _determineCurrentModule()
     {
-        $module = parent::_determineCurrentModule();
+        $module = parent::_current();
 
-        return is_null($module)
-            ? null
-            : $this->_getDeepMostUnservedModuleDependency($module);
+        return $module instanceof ModuleInterface
+            ? $this->_getDeepMostUnservedModuleDependency($module)
+            : null;
     }
 
     /**
@@ -225,6 +226,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
         parent::_rewind();
 
         $this->_setServedModules(array());
+        $this->_setCurrent(null);
         $this->_next();
     }
 
@@ -251,7 +253,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
         }
 
         // Keep advancing until an unserved module is found or until end of module list
-        while ($this->_valid() && $this->_isModuleServed(parent::_determineCurrentModule()->getKey())) {
+        while ($this->_valid() && $this->_isModuleServed(parent::_current()->getKey())) {
             parent::_next();
         }
 
