@@ -12,7 +12,9 @@
     "minimum-stability": "dev",
     "require": {
         "php": "^5.3 | ^7.0",
-        "dhii/modular-interface": "dev-task/initial-interface"
+        "rebelcode/module-interface": "dev-master",
+        "dhii/modular-interface": "dev-task/initial-interface",
+        "dhii/collections-abstract-base": "dev-wip/refactor"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8",
@@ -28,5 +30,11 @@
     "scripts": {
         "test": "phpunit",
         "csfix": "php-cs-fixer fix -vvv"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/RebelCodecom/module-interface"
+        }
+    ]
 }

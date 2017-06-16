@@ -3,14 +3,15 @@
 namespace RebelCode\Modular\Iterator;
 
 use ArrayAccess;
+use Dhii\Collection\AbstractTraversableCollection;
 use Dhii\Modular\Module\ModuleInterface;
 
 /**
- * Description of AbstractDependencyModuleIterator.
+ * Basic functionality for a module iterator that handles dependencies.
  *
  * @since [*next-version*]
  */
-abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
+abstract class AbstractDependencyModuleIterator extends AbstractTraversableCollection
 {
     /**
      * The modules that have already been served, mapped by their keys.
@@ -29,6 +30,93 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      * @var ModuleInterface
      */
     protected $current;
+
+    /**
+     * A map of the module instances mapped using the module keys.
+     *
+     * @since [*next-version*]
+     *
+     * @var ModuleInterface[]
+     */
+    protected $moduleMap;
+
+    /**
+     * Internal parameterless constructor.
+     *
+     * @since [*next-version*]
+     */
+    protected function _construct()
+    {
+        parent::_construct();
+    }
+
+    /**
+     * Retrieves the map of modules, mapped by their keys.
+     *
+     * @since [*next-version*]
+     *
+     * @return array
+     */
+    protected function _getModuleMap()
+    {
+        if (is_null($this->moduleMap)) {
+            $this->moduleMap = $this->_createModuleMap($this->_getCachedItems());
+        }
+
+        return $this->moduleMap;
+    }
+
+    /**
+     * Creates a map of modules, mapped by their keys, from a given module list.
+     *
+     * @since [*next-version*]
+     *
+     * @param array $modules The list of modules.
+     *
+     * @return array The modules, mapped by their keys.
+     */
+    protected function _createModuleMap(array $modules)
+    {
+        $map = array();
+
+        foreach ($modules as $_module) {
+            $map[$_module->getKey()] = $_module;
+        }
+
+        return $map;
+    }
+
+    /**
+     * Clears the map of modules.
+     *
+     * @since [*next-version*]
+     *
+     * @return $this
+     */
+    protected function _clearModuleMap()
+    {
+        $this->moduleMap = null;
+
+        return $this;
+    }
+
+    /**
+     * Retrieves the module with a specific key.
+     *
+     * @since [*next-version*]
+     *
+     * @param string $key The module key.
+     *
+     * @return ModuleInterface|null The module with the given key or null if the module key was not found.
+     */
+    protected function _getModuleByKey($key)
+    {
+        $moduleMap = $this->_getModuleMap();
+
+        return isset($moduleMap[$key])
+            ? $moduleMap[$key]
+            : null;
+    }
 
     /**
      * Retrieves the list of modules that have already been served.
@@ -208,11 +296,11 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
      */
     protected function _determineCurrentModule()
     {
-        $module = parent::_determineCurrentModule();
+        $module = parent::_current();
 
-        return is_null($module)
-            ? null
-            : $this->_getDeepMostUnservedModuleDependency($module);
+        return $module instanceof ModuleInterface
+            ? $this->_getDeepMostUnservedModuleDependency($module)
+            : null;
     }
 
     /**
@@ -225,6 +313,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
         parent::_rewind();
 
         $this->_setServedModules(array());
+        $this->_setCurrent(null);
         $this->_next();
     }
 
@@ -251,7 +340,7 @@ abstract class AbstractDependencyModuleIterator extends AbstractModuleIterator
         }
 
         // Keep advancing until an unserved module is found or until end of module list
-        while ($this->_valid() && $this->_isModuleServed(parent::_determineCurrentModule()->getKey())) {
+        while ($this->_valid() && $this->_isModuleServed(parent::_current()->getKey())) {
             parent::_next();
         }
 
