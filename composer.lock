@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9039bb500fcfbb304648095337eeee2b",
+    "content-hash": "4a2cbc4721e0ceeda81da85319503882",
     "packages": [
         {
             "name": "dhii/collections-abstract-base",
@@ -93,12 +93,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dhii/modular-interface.git",
-                "reference": "38d369b22c4caa69ad9484dd1e940c359a458d79"
+                "reference": "e3d396498239c0d1751c70ff2d751118bcb4195f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Dhii/modular-interface/zipball/38d369b22c4caa69ad9484dd1e940c359a458d79",
-                "reference": "38d369b22c4caa69ad9484dd1e940c359a458d79",
+                "url": "https://api.github.com/repos/Dhii/modular-interface/zipball/e3d396498239c0d1751c70ff2d751118bcb4195f",
+                "reference": "e3d396498239c0d1751c70ff2d751118bcb4195f",
                 "shasum": ""
             },
             "require": {
@@ -128,11 +128,11 @@
                 }
             ],
             "description": "Interfaces for modular systems.",
-            "time": "2017-06-12 16:39:20"
+            "time": "2017-06-16 07:31:41"
         },
         {
             "name": "rebelcode/module-interface",
-            "version": "dev-master",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RebelCodecom/module-interface.git",
