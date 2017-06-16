@@ -59,10 +59,8 @@ abstract class AbstractDependencyModuleIterator extends AbstractTraversableColle
      */
     protected function _getModuleMap()
     {
-        $items = $this->_getCachedItems();
-
         if (is_null($this->moduleMap)) {
-            $this->moduleMap = $this->_createModuleMap($items);
+            $this->moduleMap = $this->_createModuleMap($this->_getCachedItems());
         }
 
         return $this->moduleMap;
