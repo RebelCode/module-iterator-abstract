@@ -640,4 +640,37 @@ class AbstractDependencyModuleIteratorTest extends TestCase
 
         $this->assertNull($subject->this()->_getModuleByKey('foobar'));
     }
+
+    /**
+     * Tests whether the iterator properly provides the module keys.
+     *
+     * @since [*next-version*]
+     */
+    public function testIterationKeys()
+    {
+        $subject  = $this->createInstance();
+        $_subject = $subject->this();
+
+        $module1 = $this->createModule('one');
+        $module2 = $this->createModule('mod2');
+        $module3 = $this->createModule('third');
+
+        $subject->this()->items = array(
+            'one'   => $module1,
+            'mod2'  => $module2,
+            'third' => $module3
+        );
+
+        $_subject->_rewind();
+        $_subject->_valid();
+        $this->assertEquals('one', $_subject->_key());
+
+        $_subject->_next();
+        $_subject->_valid();
+        $this->assertEquals('mod2', $_subject->_key());
+
+        $_subject->_next();
+        $_subject->_valid();
+        $this->assertEquals('third', $_subject->_key());
+    }
 }

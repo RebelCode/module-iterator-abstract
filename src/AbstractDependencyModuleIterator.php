@@ -332,6 +332,16 @@ abstract class AbstractDependencyModuleIterator extends AbstractTraversableColle
      *
      * @since [*next-version*]
      */
+    protected function _key()
+    {
+        return $this->_current()->getKey();
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
     protected function _next()
     {
         // Mark the previous module as served
