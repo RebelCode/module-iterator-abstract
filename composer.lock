@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "242b3d8f12e147b05c3d5ebdf4adcfa8",
+    "content-hash": "6ad5b5005c7d96a6fdc05e565c770236",
     "packages": [
         {
             "name": "dhii/collections-abstract-base",
@@ -89,20 +89,20 @@
         },
         {
             "name": "dhii/modular-interface",
-            "version": "dev-task/initial-interface",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dhii/modular-interface.git",
-                "reference": "e3d396498239c0d1751c70ff2d751118bcb4195f"
+                "reference": "de1fd0de001c322ca4a975ef9ee89cca872a9321"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Dhii/modular-interface/zipball/e3d396498239c0d1751c70ff2d751118bcb4195f",
-                "reference": "e3d396498239c0d1751c70ff2d751118bcb4195f",
+                "url": "https://api.github.com/repos/Dhii/modular-interface/zipball/de1fd0de001c322ca4a975ef9ee89cca872a9321",
+                "reference": "de1fd0de001c322ca4a975ef9ee89cca872a9321",
                 "shasum": ""
             },
             "require": {
-                "dhii/data-key-value-aware-interface": "^0.1",
+                "dhii/module-interface": "dev-develop",
                 "php": "^5.3 | ^7.0"
             },
             "require-dev": {
@@ -128,7 +128,7 @@
                 }
             ],
             "description": "Interfaces for modular systems.",
-            "time": "2017-06-16 07:31:41"
+            "time": "2017-06-27 07:40:59"
         },
         {
             "name": "dhii/module-interface",

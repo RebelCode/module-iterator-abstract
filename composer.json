@@ -14,7 +14,7 @@
     "require": {
         "php": "^5.3 | ^7.0",
         "rebelcode/module-interface": "dev-develop",
-        "dhii/modular-interface": "dev-task/initial-interface",
+        "dhii/modular-interface": "dev-develop",
         "dhii/collections-abstract-base": "dev-wip/refactor"
     },
     "require-dev": {
