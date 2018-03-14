@@ -43,15 +43,15 @@ abstract class AbstractDependencyModuleIterator
     protected $current;
 
     /**
-     * Sets the modules to be iterator over in a dependency-ordered fashion.
+     * Sets the modules to be iterator over.
      *
      * @since [*next-version*]
      *
-     * @param ModuleInterface[]|stdClass|Traversable $moduleIterator The module instances.
+     * @param ModuleInterface[]|stdClass|Traversable $modules The module instances.
      */
-    protected function _setModules($moduleIterator)
+    protected function _setModules($modules)
     {
-        $this->moduleIterator = $this->_normalizeIterator($moduleIterator);
+        $this->moduleIterator = $this->_normalizeIterator($modules);
     }
 
     /**
