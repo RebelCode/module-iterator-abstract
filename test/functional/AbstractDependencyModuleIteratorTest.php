@@ -32,20 +32,20 @@ class AbstractDependencyModuleIteratorTest extends TestCase
     {
         $mock = $this->getMockBuilder(static::TEST_SUBJECT_CLASSNAME)
                      ->setMethods(
-                         [
+                         array(
                              '_getModuleDependencies',
                              '_normalizeIterator',
-                         ]
+                         )
                      )
                      ->getMockForAbstractClass();
 
         $mock->method('_getModuleDependencies')->willReturnCallback(
-            function($module) {
+            function ($module) {
                 return $module->getDependencies();
             }
         );
         $mock->method('_normalizeIterator')->willReturnCallback(
-            function($arg) {
+            function ($arg) {
                 return new ArrayIterator($arg);
             }
         );
@@ -63,7 +63,7 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      *
      * @return ModuleInterface
      */
-    public function createModule($key, $deps = [])
+    public function createModule($key, $deps = array())
     {
         $mock = $this->mock('Dhii\\Modular\\Module\\ModuleInterface')
                      ->getKey($key)
@@ -98,13 +98,13 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testIsModuleServed()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
-        $modules = [
+        $modules = array(
             'one' => $this->createModule('one'),
             'two' => $this->createModule('two'),
-        ];
+        );
 
         $_subject->servedModules = $modules;
 
@@ -120,28 +120,28 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testGetUnservedModuleDependencies()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $module = $this->createModule(
             'test',
-            [
+            array(
                 'dep1' => $dep1 = $this->createModule('dep1'),
                 'dep2' => $dep2 = $this->createModule('dep2'),
                 'dep3' => $dep3 = $this->createModule('dep3'),
                 'dep4' => $dep4 = $this->createModule('dep4'),
-            ]
+            )
         );
 
-        $_subject->servedModules = [
+        $_subject->servedModules = array(
             'dep1' => $dep1,
             'dep3' => $dep3,
-        ];
+        );
 
-        $expected = [
+        $expected = array(
             'dep2' => $dep2,
             'dep4' => $dep4,
-        ];
+        );
 
         $this->assertEquals($expected, $_subject->_getUnservedModuleDependencies($module));
     }
@@ -153,28 +153,28 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testGetDeepMostUnservedModuleDependency()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $module = $this->createModule(
             'test',
-            [
+            array(
                 'dep1' => $dep1 = $this->createModule('dep1'),
                 'dep2' => $dep2 = $this->createModule(
                     'dep2',
-                    [
+                    array(
                         'dep2a' => $dep2a = $this->createModule('dep2a'),
                         'dep2b' => $dep2b = $this->createModule('dep2b'),
-                    ]
+                    )
                 ),
                 'dep3' => $dep3 = $this->createModule('dep3'),
-            ]
+            )
         );
 
-        $_subject->servedModules = [
+        $_subject->servedModules = array(
             'dep1'  => $dep1,
             'dep2a' => $dep2a,
-        ];
+        );
 
         $this->assertEquals($dep2b, $_subject->_getDeepMostUnservedModuleDependency($module));
     }
@@ -186,7 +186,7 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testGetDeepMostUnservedModuleDependencyNoDeps()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $module = $this->createModule('test');
@@ -201,21 +201,21 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testGetDeepMostUnservedModuleDependencyAllServed()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $module = $this->createModule(
             'test',
-            [
+            array(
                 'dep1' => $dep1 = $this->createModule('dep1'),
                 'dep2' => $dep2 = $this->createModule('dep2'),
-            ]
+            )
         );
 
-        $_subject->servedModules = [
+        $_subject->servedModules = array(
             'dep1' => $dep1,
             'dep2' => $dep2,
-        ];
+        );
 
         $this->assertEquals($module, $_subject->_getDeepMostUnservedModuleDependency($module));
     }
@@ -227,15 +227,15 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testGetDeepMostUnservedModuleDependencyCircular()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $module = $this->createModule('test');
-        $dep = $this->createModule('dep', [$module]);
+        $dep    = $this->createModule('dep', array($module));
 
         $module->mock()->getDependencies(
-            function() use ($dep) {
-                return ['dep' => $dep];
+            function () use ($dep) {
+                return array('dep' => $dep);
             }
         );
 
@@ -249,31 +249,31 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testRewind()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $_subject->moduleIterator = new ArrayIterator(
-            [
-                'one'   => $modOne = $this->createModule('one'),
-                'two'   => $modTwo = $this->createModule(
+            array(
+                'one' => $modOne = $this->createModule('one'),
+                'two' => $modTwo = $this->createModule(
                     'two',
-                    [
+                    array(
                         'two-dep' => $modTwoDep = $this->createModule('two-dep'),
-                    ]
+                    )
                 ),
                 'three' => $modThree = $this->createModule('three'),
-            ]
+            )
         );
 
         $_subject->_rewind();
         $_subject->_valid();
         $_subject->_next();
 
-        $_subject->servedModules = [
+        $_subject->servedModules = array(
             'one'     => $modOne,
             'two-dep' => $modTwoDep,
             'two'     => $modTwo,
-        ];
+        );
 
         $_subject->_rewind();
 
@@ -287,15 +287,15 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testNext()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $_subject->moduleIterator = new ArrayIterator(
-            [
+            array(
                 'one'   => $modOne = $this->createModule('one'),
                 'two'   => $modTwo = $this->createModule('two'),
                 'three' => $modThree = $this->createModule('three'),
-            ]
+            )
         );
 
         $_subject->_rewind();
@@ -319,22 +319,22 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testNextWithDependency()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $modThree = $this->createModule('three');
 
         $_subject->moduleIterator = new ArrayIterator(
-            [
-                'one'   => $modOne = $this->createModule('one'),
-                'two'   => $modTwo = $this->createModule(
+            array(
+                'one' => $modOne = $this->createModule('one'),
+                'two' => $modTwo = $this->createModule(
                     'two',
-                    [
+                    array(
                         'three' => $modThree,
-                    ]
+                    )
                 ),
                 'three' => $modThree,
-            ]
+            )
         );
 
         $_subject->_rewind();
@@ -358,29 +358,29 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testNextWithDeepDependency()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
-        $modFour = $this->createModule('four');
+        $modFour  = $this->createModule('four');
         $modThree = $this->createModule(
             'three',
-            [
+            array(
                 'four' => $modFour,
-            ]
+            )
         );
 
         $_subject->moduleIterator = new ArrayIterator(
-            [
-                'one'   => $modOne = $this->createModule('one'),
-                'two'   => $modTwo = $this->createModule(
+            array(
+                'one' => $modOne = $this->createModule('one'),
+                'two' => $modTwo = $this->createModule(
                     'two',
-                    [
+                    array(
                         'three' => $modThree,
-                    ]
+                    )
                 ),
                 'three' => $modThree,
                 'four'  => $modFour,
-            ]
+            )
         );
 
         $_subject->_rewind();
@@ -408,25 +408,25 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testNextWithMultipleDependencies()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $modThree = $this->createModule('three');
-        $modFour = $this->createModule('four');
+        $modFour  = $this->createModule('four');
 
         $_subject->moduleIterator = new ArrayIterator(
-            [
-                'one'   => $modOne = $this->createModule('one'),
-                'two'   => $modTwo = $this->createModule(
+            array(
+                'one' => $modOne = $this->createModule('one'),
+                'two' => $modTwo = $this->createModule(
                     'two',
-                    [
+                    array(
                         'three' => $modThree,
                         'four'  => $modFour,
-                    ]
+                    )
                 ),
                 'three' => $modThree,
                 'four'  => $modFour,
-            ]
+            )
         );
 
         $_subject->_rewind();
@@ -455,25 +455,25 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testNextWithServedDependencies()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $modOne = $this->createModule('one');
         $modTwo = $this->createModule('two');
 
         $_subject->moduleIterator = new ArrayIterator(
-            [
+            array(
                 'one'   => $modOne,
                 'two'   => $modTwo,
                 'three' => $modThree = $this->createModule(
                     'three',
-                    [
+                    array(
                         'one' => $modOne,
                         'two' => $modTwo,
-                    ]
+                    )
                 ),
-                'four'  => $modFour = $this->createModule('four'),
-            ]
+                'four' => $modFour = $this->createModule('four'),
+            )
         );
 
         $_subject->_rewind();
@@ -501,7 +501,7 @@ class AbstractDependencyModuleIteratorTest extends TestCase
      */
     public function testIterationKeys()
     {
-        $subject = $this->createInstance();
+        $subject  = $this->createInstance();
         $_subject = $this->reflect($subject);
 
         $module1 = $this->createModule('one');
@@ -509,11 +509,11 @@ class AbstractDependencyModuleIteratorTest extends TestCase
         $module3 = $this->createModule('third');
 
         $_subject->moduleIterator = new ArrayIterator(
-            [
+            array(
                 'one'   => $module1,
                 'mod2'  => $module2,
                 'third' => $module3,
-            ]
+            )
         );
 
         $_subject->_rewind();

@@ -61,8 +61,8 @@ abstract class AbstractDependencyModuleIterator
      */
     protected function _rewind()
     {
-        $this->servedModules = [];
-        $this->current = null;
+        $this->servedModules = array();
+        $this->current       = null;
         $this->moduleIterator->rewind();
 
         $this->_next();
