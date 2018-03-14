@@ -3,16 +3,27 @@
 namespace RebelCode\Modular\Iterator;
 
 use ArrayAccess;
-use Dhii\Collection\AbstractTraversableCollection;
 use Dhii\Modular\Module\ModuleInterface;
+use Iterator;
+use stdClass;
+use Traversable;
 
 /**
  * Basic functionality for a module iterator that handles dependencies.
  *
  * @since [*next-version*]
  */
-abstract class AbstractDependencyModuleIterator extends AbstractTraversableCollection
+abstract class AbstractDependencyModuleIterator
 {
+    /**
+     * The inner module iterator.
+     *
+     * @since [*next-version*]
+     *
+     * @var Iterator
+     */
+    protected $moduleIterator;
+
     /**
      * The modules that have already been served, mapped by their keys.
      *
@@ -32,118 +43,89 @@ abstract class AbstractDependencyModuleIterator extends AbstractTraversableColle
     protected $current;
 
     /**
-     * A map of the module instances mapped using the module keys.
+     * Sets the modules to be iterator over in a dependency-ordered fashion.
      *
      * @since [*next-version*]
      *
-     * @var ModuleInterface[]
+     * @param ModuleInterface[]|stdClass|Traversable $moduleIterator The module instances.
      */
-    protected $moduleMap;
-
-    /**
-     * Internal parameterless constructor.
-     *
-     * @since [*next-version*]
-     */
-    protected function _construct()
+    protected function _setModules($moduleIterator)
     {
-        parent::_construct();
+        $this->moduleIterator = $this->_normalizeIterator($moduleIterator);
     }
 
     /**
-     * Retrieves the map of modules, mapped by their keys.
+     * {@inheritdoc}
      *
      * @since [*next-version*]
-     *
-     * @return array
      */
-    protected function _getModuleMap()
+    protected function _rewind()
     {
-        if (is_null($this->moduleMap)) {
-            $this->moduleMap = $this->_createModuleMap($this->_getCachedItems());
-        }
+        $this->servedModules = [];
+        $this->current = null;
+        $this->moduleIterator->rewind();
 
-        return $this->moduleMap;
+        $this->_next();
     }
 
     /**
-     * Creates a map of modules, mapped by their keys, from a given module list.
+     * {@inheritdoc}
      *
      * @since [*next-version*]
-     *
-     * @param array $modules The list of modules.
-     *
-     * @return array The modules, mapped by their keys.
      */
-    protected function _createModuleMap(array $modules)
+    protected function _current()
     {
-        $map = array();
-
-        foreach ($modules as $_module) {
-            $map[$_module->getKey()] = $_module;
-        }
-
-        return $map;
+        return $this->current;
     }
 
     /**
-     * Clears the map of modules.
+     * {@inheritdoc}
      *
      * @since [*next-version*]
-     *
-     * @return $this
      */
-    protected function _clearModuleMap()
+    protected function _key()
     {
-        $this->moduleMap = null;
-
-        return $this;
-    }
-
-    /**
-     * Retrieves the module with a specific key.
-     *
-     * @since [*next-version*]
-     *
-     * @param string $key The module key.
-     *
-     * @return ModuleInterface|null The module with the given key or null if the module key was not found.
-     */
-    protected function _getModuleByKey($key)
-    {
-        $moduleMap = $this->_getModuleMap();
-
-        return isset($moduleMap[$key])
-            ? $moduleMap[$key]
+        return ($this->current !== null)
+            ? $this->current->getKey()
             : null;
     }
 
     /**
-     * Retrieves the list of modules that have already been served.
+     * {@inheritdoc}
      *
      * @since [*next-version*]
-     *
-     * @return ModuleInterface[] An array of module instances mapped by their keys.
      */
-    protected function _getServedModules()
+    protected function _next()
     {
-        return $this->servedModules;
+        $previous = $this->current;
+
+        // Mark the previous module as served
+        if ($previous !== null) {
+            $this->_markModuleAsServed($previous);
+        }
+
+        // Keep advancing until an unserved module is found or until end of module list
+        while ($this->moduleIterator->valid() && $this->_isModuleServed($this->moduleIterator->current()->getKey())) {
+            $this->moduleIterator->next();
+        }
+
+        // Get the module from the inner iterator
+        $module = $this->moduleIterator->current();
+
+        // Determine _actual_ current module, which may be a dependency of the found unserved module
+        $this->current = ($module !== null)
+            ? $this->_getDeepMostUnservedModuleDependency($module)
+            : null;
     }
 
     /**
-     * Sets the modules that have already been served.
+     * {@inheritdoc}
      *
      * @since [*next-version*]
-     *
-     * @param ModuleInterface[] $served An array of module instances mapped by their keys.
-     *
-     * @return $this
      */
-    protected function _setServedModules(array $served)
+    protected function _valid()
     {
-        $this->servedModules = $served;
-
-        return $this;
+        return $this->current !== null;
     }
 
     /**
@@ -153,25 +135,9 @@ abstract class AbstractDependencyModuleIterator extends AbstractTraversableColle
      *
      * @return $this
      */
-    protected function _addServedModule(ModuleInterface $module)
+    protected function _markModuleAsServed(ModuleInterface $module)
     {
         $this->servedModules[$module->getKey()] = $module;
-
-        return $this;
-    }
-
-    /**
-     * Removes a module from the list of served modules.
-     *
-     * @since [*next-version*]
-     *
-     * @param string $key The module key.
-     *
-     * @return $this
-     */
-    protected function _removeServedModule($key)
-    {
-        unset($this->servedModules[$key]);
 
         return $this;
     }
@@ -188,67 +154,6 @@ abstract class AbstractDependencyModuleIterator extends AbstractTraversableColle
     protected function _isModuleServed($key)
     {
         return isset($this->servedModules[$key]);
-    }
-
-    /**
-     * Gets the current module being served.
-     *
-     * This method should be an inexpensive call to a cached result.
-     *
-     * @see AbstractModuleIterator::_determineCurrentModule()
-     * @since [*next-version*]
-     *
-     * @return ModuleInterface|null The module instance or null if no module is being served.
-     */
-    protected function _getCurrent()
-    {
-        return $this->current;
-    }
-
-    /**
-     * Sets the current module to serve.
-     *
-     * @since [*next-version*]
-     *
-     * @param ModuleInterface|null $current The module instance to serve. Default: null
-     *
-     * @return $this
-     */
-    protected function _setCurrent(ModuleInterface $current = null)
-    {
-        $this->current = $current;
-
-        return $this;
-    }
-
-    /**
-     * Retrieves the dependencies for a specific module.
-     *
-     * @since [*next-version*]
-     *
-     * @param ModuleInterface $module The module instance.
-     *
-     * @return ModuleInterface[]|ArrayAccess
-     */
-    abstract protected function _getModuleDependencies(ModuleInterface $module);
-
-    /**
-     * Gets the dependencies of a module that.
-     *
-     * @since [*next-version*]
-     *
-     * @param ModuleInterface $module The module instance.
-     *
-     * @return ModuleInterface[] A list of module instances mapped by their keys.
-     */
-    protected function _getUnservedModuleDependencies(ModuleInterface $module)
-    {
-        $_this        = $this;
-        $dependencies = $this->_getModuleDependencies($module);
-
-        return array_filter($dependencies, function ($dep) use ($_this) {
-            return $dep instanceof ModuleInterface && !$_this->_isModuleServed($dep->getKey());
-        });
     }
 
     /**
@@ -288,73 +193,46 @@ abstract class AbstractDependencyModuleIterator extends AbstractTraversableColle
     }
 
     /**
-     * {@inheritdoc}
+     * Gets the dependencies of a module that.
      *
      * @since [*next-version*]
      *
-     * @return ModuleInterface
+     * @param ModuleInterface $module The module instance.
+     *
+     * @return ModuleInterface[] A list of module instances mapped by their keys.
      */
-    protected function _determineCurrentModule()
+    protected function _getUnservedModuleDependencies(ModuleInterface $module)
     {
-        $module = parent::_current();
+        $_this        = $this;
+        $dependencies = $this->_getModuleDependencies($module);
 
-        return $module instanceof ModuleInterface
-            ? $this->_getDeepMostUnservedModuleDependency($module)
-            : null;
+        return array_filter($dependencies, function ($dep) use ($_this) {
+            return $dep instanceof ModuleInterface && !$_this->_isModuleServed($dep->getKey());
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves the dependencies for a specific module.
      *
      * @since [*next-version*]
+     *
+     * @param ModuleInterface $module The module instance.
+     *
+     * @return ModuleInterface[]|ArrayAccess
      */
-    protected function _rewind()
-    {
-        parent::_rewind();
-
-        $this->_setServedModules(array());
-        $this->_setCurrent(null);
-        $this->_next();
-    }
+    abstract protected function _getModuleDependencies(ModuleInterface $module);
 
     /**
-     * {@inheritdoc}
+     * Normalizes an iterable value into an iterator.
+     *
+     * If the value is iterable, the resulting iterator would iterate over the
+     * elements in the iterable.
      *
      * @since [*next-version*]
-     */
-    protected function _current()
-    {
-        return $this->_getCurrent();
-    }
-
-    /**
-     * {@inheritdoc}
      *
-     * @since [*next-version*]
-     */
-    protected function _key()
-    {
-        return $this->_current()->getKey();
-    }
-
-    /**
-     * {@inheritdoc}
+     * @param array|stdClass|Traversable|mixed $iterable The value to normalize.
      *
-     * @since [*next-version*]
+     * @return Iterator The normalized iterator.
      */
-    protected function _next()
-    {
-        // Mark the previous module as served
-        if (!is_null($previous = $this->_getCurrent())) {
-            $this->_addServedModule($previous);
-        }
-
-        // Keep advancing until an unserved module is found or until end of module list
-        while ($this->_valid() && $this->_isModuleServed(parent::_current()->getKey())) {
-            parent::_next();
-        }
-
-        // Determine _actual_ current module, which may be a depedency of the found unserved module
-        $this->_setCurrent($this->_determineCurrentModule());
-    }
+    abstract protected function _normalizeIterator($iterable);
 }
