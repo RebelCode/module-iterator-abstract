@@ -26,6 +26,12 @@
             "RebelCode\\Modular\\Iterator\\": "src"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "RebelCode\\Modular\\Iterator\\UnitTest\\": "test/unit",
+            "RebelCode\\Modular\\Iterator\\FuncTest\\": "test/functional"
+        }
+    },
     "scripts": {
         "test": "phpunit",
         "csfix": "php-cs-fixer fix -vvv"
