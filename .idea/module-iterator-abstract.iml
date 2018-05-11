@@ -2,12 +2,14 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/test/functional" isTestSource="true" packagePrefix="RebelCode\Modular\Iterator\FuncTest\" />
+      <sourceFolder url="file://$MODULE_DIR$/test/unit" isTestSource="true" packagePrefix="RebelCode\Modular\Iterator\UnitTest\" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="RebelCode\Modular\Iterator\" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/codeclimate/php-test-reporter" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/data-key-value-aware-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/exception-interface" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/modular-interface" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/factory-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/module-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/php-cs-fixer-config" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/stringable-interface" />
